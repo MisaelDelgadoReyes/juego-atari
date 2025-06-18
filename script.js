@@ -61,4 +61,40 @@ function createEnemies() {
 }
 createEnemies();
 
+function drawEnemies() {
+  ctx.fillStyle = "white";
+  enemies.forEach((enemy) => {
+    if (enemy.alive) {
+      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    }
+  });
+}
 
+function moveEnemies() {
+  let shouldReverse = false;
+  enemies.forEach((enemy) => {
+    if (!enemy.alive) return;
+    enemy.x += enemyDirection * enemySpeed;
+
+    if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
+      shouldReverse = true;
+    }
+  });
+
+  if (shouldReverse) {
+    enemyDirection *= -1;
+    enemies.forEach((enemy) => {
+      enemy.y += 10; // bajan una fila
+    });
+  }
+}
+
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawPlayer();
+  drawBullets();
+  moveEnemies();
+  drawEnemies();
+
+}
