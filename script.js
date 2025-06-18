@@ -89,12 +89,29 @@ function moveEnemies() {
   }
 }
 
-function gameLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  drawPlayer();
-  drawBullets();
-  moveEnemies();
-  drawEnemies();
-
+function checkCollisions() {
+  bullets.forEach((bullet, bIndex) => {
+    enemies.forEach((enemy) => {
+      if (
+        enemy.alive &&
+        bullet.x < enemy.x + enemy.width &&
+        bullet.x + bullet.width > enemy.x &&
+        bullet.y < enemy.y + enemy.height &&
+        bullet.y + bullet.height > enemy.y
+      ) {
+        enemy.alive = false;
+        bullets.splice(bIndex, 1);
+        score += 10;
+      }
+    });
+  });
 }
+
+let score = 0;
+
+function drawScore() {
+  ctx.fillStyle = "white";
+  ctx.font = "16px Arial";
+  ctx.fillText("Score: " + score, 10, 20);
+}
+
