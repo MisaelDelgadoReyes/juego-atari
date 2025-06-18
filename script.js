@@ -107,6 +107,7 @@ function checkCollisions() {
   });
 }
 
+// Puntaje
 let score = 0;
 
 function drawScore() {
@@ -115,3 +116,18 @@ function drawScore() {
   ctx.fillText("Score: " + score, 10, 20);
 }
 
+// Bucle principal del juego
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawPlayer();
+  drawBullets();
+  moveEnemies();
+  drawEnemies();
+  checkCollisions();
+  drawScore();
+
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
