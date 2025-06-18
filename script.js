@@ -18,7 +18,12 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") player.x -= player.speed;
   if (e.key === "ArrowRight") player.x += player.speed;
   if (e.key === " " || e.key === "ArrowUp") {
-    bullets.push({ x: player.x + player.width / 2 - 2, y: player.y, width: 4, height: 10 });
+    bullets.push({
+      x: player.x + player.width / 2 - 2,
+      y: player.y,
+      width: 4,
+      height: 10
+    });
   }
 });
 
@@ -43,7 +48,7 @@ const enemies = [];
 const enemyWidth = 30;
 const enemyHeight = 20;
 const enemySpacing = 10;
-let enemyDirection = 1; // 1 = derecha, -1 = izquierda
+let enemyDirection = 1;
 let enemySpeed = 1;
 
 function createEnemies() {
@@ -116,18 +121,42 @@ function drawScore() {
   ctx.fillText("Score: " + score, 10, 20);
 }
 
-// ================== Victoria ==================
+// ================== Verificar Victoria o Derrota ==================
 function allEnemiesDefeated() {
   return enemies.every(enemy => !enemy.alive);
 }
 
-let gameWon = false;
+function checkGameOver() {
+  return enemies.some(enemy =>
+    enemy.alive &&
+    enemy.y + enemy.height >= player.y &&
+    enemy.x < player.x + player.width &&
+    enemy.x + enemy.width > player.x
+  );
+}
 
-// ================== Bucle del Juego ==================
+let gameWon = false;
+let gameOver = false;
+
+// ================== Bucle Principal ==================
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (!gameWon) {
+  if (gameOver) {
+    ctx.fillStyle = "red";
+    ctx.font = "30px Arial";
+    ctx.fillText("💀 ¡Perdiste!", canvas.width / 2 - 100, canvas.height / 2);
+    ctx.font = "20px Arial";
+    ctx.fillText("Reiniciando en 10 segundos...", canvas.width / 2 - 130, canvas.height / 2 + 40);
+  } 
+  else if (gameWon) {
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("🎉 ¡Juego Completado!", canvas.width / 2 - 150, canvas.height / 2);
+    ctx.font = "20px Arial";
+    ctx.fillText("Reiniciando en 10 segundos...", canvas.width / 2 - 130, canvas.height / 2 + 40);
+  } 
+  else {
     drawPlayer();
     drawBullets();
     moveEnemies();
@@ -137,17 +166,17 @@ function gameLoop() {
 
     if (allEnemiesDefeated()) {
       gameWon = true;
-      setTimeout(() => location.reload(), 10000); // Reinicia en 10 segundos
+      setTimeout(() => location.reload(), 10000);
     }
-  } else {
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.fillText("🎉 ¡Juego Completado!", canvas.width / 2 - 150, canvas.height / 2);
-    ctx.font = "20px Arial";
-    ctx.fillText("Reiniciando en 10 segundos...", canvas.width / 2 - 130, canvas.height / 2 + 40);
+
+    if (checkGameOver()) {
+      gameOver = true;
+      setTimeout(() => location.reload(), 10000);
+    }
   }
 
   requestAnimationFrame(gameLoop);
 }
 
 gameLoop();
+
