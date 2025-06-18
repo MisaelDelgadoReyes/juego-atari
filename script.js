@@ -36,11 +36,29 @@ function drawBullets() {
   });
 }
 
-function gameLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawPlayer();
-  drawBullets();
-  requestAnimationFrame(gameLoop);
-}
+// Enemigos
+const enemyRows = 4;
+const enemyCols = 8;
+const enemies = [];
+const enemyWidth = 30;
+const enemyHeight = 20;
+const enemySpacing = 10;
+let enemyDirection = 1; // 1 = derecha, -1 = izquierda
+let enemySpeed = 1;
 
-gameLoop();
+function createEnemies() {
+  for (let row = 0; row < enemyRows; row++) {
+    for (let col = 0; col < enemyCols; col++) {
+      enemies.push({
+        x: 50 + col * (enemyWidth + enemySpacing),
+        y: 50 + row * (enemyHeight + enemySpacing),
+        width: enemyWidth,
+        height: enemyHeight,
+        alive: true
+      });
+    }
+  }
+}
+createEnemies();
+
+
