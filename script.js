@@ -1,7 +1,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Jugador
+// ================== Jugador ==================
 const player = {
   x: canvas.width / 2 - 15,
   y: canvas.height - 40,
@@ -11,7 +11,7 @@ const player = {
   speed: 5
 };
 
-// Balas
+// ================== Balas ==================
 let bullets = [];
 
 document.addEventListener("keydown", (e) => {
@@ -36,7 +36,7 @@ function drawBullets() {
   });
 }
 
-// Enemigos
+// ================== Enemigos ==================
 const enemyRows = 4;
 const enemyCols = 8;
 const enemies = [];
@@ -75,7 +75,6 @@ function moveEnemies() {
   enemies.forEach((enemy) => {
     if (!enemy.alive) return;
     enemy.x += enemyDirection * enemySpeed;
-
     if (enemy.x + enemy.width > canvas.width || enemy.x < 0) {
       shouldReverse = true;
     }
@@ -84,11 +83,12 @@ function moveEnemies() {
   if (shouldReverse) {
     enemyDirection *= -1;
     enemies.forEach((enemy) => {
-      enemy.y += 10; // bajan una fila
+      enemy.y += 10;
     });
   }
 }
 
+// ================== Colisiones ==================
 function checkCollisions() {
   bullets.forEach((bullet, bIndex) => {
     enemies.forEach((enemy) => {
@@ -107,7 +107,7 @@ function checkCollisions() {
   });
 }
 
-// Puntaje
+// ================== Puntaje ==================
 let score = 0;
 
 function drawScore() {
@@ -116,16 +116,36 @@ function drawScore() {
   ctx.fillText("Score: " + score, 10, 20);
 }
 
-// Bucle principal del juego
+// ================== Victoria ==================
+function allEnemiesDefeated() {
+  return enemies.every(enemy => !enemy.alive);
+}
+
+let gameWon = false;
+
+// ================== Bucle del Juego ==================
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  drawPlayer();
-  drawBullets();
-  moveEnemies();
-  drawEnemies();
-  checkCollisions();
-  drawScore();
+  if (!gameWon) {
+    drawPlayer();
+    drawBullets();
+    moveEnemies();
+    drawEnemies();
+    checkCollisions();
+    drawScore();
+
+    if (allEnemiesDefeated()) {
+      gameWon = true;
+      setTimeout(() => location.reload(), 10000); // Reinicia en 10 segundos
+    }
+  } else {
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("🎉 ¡Juego Completado!", canvas.width / 2 - 150, canvas.height / 2);
+    ctx.font = "20px Arial";
+    ctx.fillText("Reiniciando en 10 segundos...", canvas.width / 2 - 130, canvas.height / 2 + 40);
+  }
 
   requestAnimationFrame(gameLoop);
 }
